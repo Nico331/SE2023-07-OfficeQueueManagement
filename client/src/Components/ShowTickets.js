@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+/**
+ * Solo di esempio, da togliere!
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const TicketList = () => {
     const [tickets, setTickets] = useState([]);
 

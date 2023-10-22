@@ -10,5 +10,8 @@ data class Counter(
     val id: Long,
 
     @Column(nullable = false)
-    val number: Int
+    val number: Int,
+
+    @Column(nullable = false)
+    val working: Boolean,
 )

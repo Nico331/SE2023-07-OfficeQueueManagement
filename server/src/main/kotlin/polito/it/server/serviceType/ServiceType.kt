@@ -14,5 +14,8 @@ data class ServiceType(
     val tag: String,
 
     @Column(nullable = false)
-    val serviceTime: Int
+    val serviceTime: Int,
+
+    @Column(nullable = false)
+    val working: Boolean,
 )
