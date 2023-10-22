@@ -6,6 +6,10 @@ plugins {
     kotlin("jvm") version "1.8.22"
     kotlin("plugin.spring") version "1.8.22"
     kotlin("plugin.jpa") version "1.8.22"
+    id("com.google.cloud.tools.jib") version "3.3.1"
+    kotlin("plugin.allopen") version "1.8.20"
+    kotlin("plugin.lombok") version "1.8.10"
+    id("io.freefair.lombok") version "5.3.0"
 }
 
 group = "polito.it"
