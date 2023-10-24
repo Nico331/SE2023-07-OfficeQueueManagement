@@ -66,4 +66,8 @@ class TicketServiceImpl(
             ticketRepository.countByServiceTypeTagAndStatus(serviceType.tag, "waiting")
         }
     }
+
+    override fun getCurrentCounterTicket(counterId: Long): TicketDTO {
+        return ticketRepository.findFirstByCounterIdAndDateIssuedNullOrderByTimestampDesc(counterId).toDTO();
+    }
 }
