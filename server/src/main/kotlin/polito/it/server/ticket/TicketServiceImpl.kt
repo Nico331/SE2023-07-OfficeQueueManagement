@@ -92,4 +92,12 @@ class TicketServiceImpl(
         val pageRequest = PageRequest.of(0, 5)
         return ticketRepository.findByCounterIsNotNullOrderByDateIssuedDesc(pageRequest).map { it.toDTO() };
     }
+
+
+    override fun stopTicket(counterId: Long): TicketDTO {
+        var ticket = ticketRepository.findFirstByCounterIdOrderByTimestampDesc(counterId);
+        ticket.apply { status = "served"}
+        ticketRepository.save(ticket)
+        return ticket.toDTO()
+    }
 }

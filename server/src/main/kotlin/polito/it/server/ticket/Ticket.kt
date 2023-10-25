@@ -32,7 +32,7 @@ data class Ticket(
     val counter: Counter?=null,
 
     @Column(nullable = false)
-    val status: String = "waiting", // Ad es. "waiting", "served", etc.
+    var status: String = "waiting", // Ad es. "waiting", "served", etc.
 
     @Column(nullable = true)
     val waitingTime: Duration?=null // Ad es. "waiting", "served", etc.

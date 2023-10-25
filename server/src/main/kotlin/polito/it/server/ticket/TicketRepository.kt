@@ -15,4 +15,6 @@ interface TicketRepository: JpaRepository<Ticket, Long> {
     fun findFirstByCounterIdAndTimestampNotNullOrderByTimestampDesc(counterId: Long): Ticket
 
     fun findByCounterIsNotNullOrderByDateIssuedDesc(pageRequest: PageRequest): List<Ticket>
+
+    fun findFirstByCounterIdOrderByTimestampDesc(counterId: Long): Ticket
 }

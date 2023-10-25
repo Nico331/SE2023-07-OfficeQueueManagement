@@ -27,4 +27,5 @@ interface TicketService {
 
     fun getCurrentCounterTicket(counterId: Long): TicketDTO
     fun getMainboard(): List<TicketDTO>
+    fun stopTicket(counterId: Long): TicketDTO
 }

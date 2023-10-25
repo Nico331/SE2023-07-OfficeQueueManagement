@@ -1,12 +1,7 @@
 package polito.it.server.ticket
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/API")
@@ -27,6 +22,16 @@ class TicketController (private val ticketService: TicketService) {
     @PostMapping("/ticket/servicetype/{serviceType}")
     fun addTicket(@PathVariable serviceType: Long) : ResponseEntity<TicketDTO> {
         return ticketService.addTicket(serviceType)
+    }
+
+
+    @PutMapping("/counter/{counterId}/next")
+    fun nextTicket(@PathVariable counterId: Long) : TicketDTO {
+        return ticketService.getNextTicket(counterId);
+    }
+    @PutMapping("/counter/{counterId}/stop")
+    fun stopTicket(@PathVariable counterId: Long) : TicketDTO {
+        return ticketService.stopTicket(counterId)
     }
 
 }
