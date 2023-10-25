@@ -20,5 +20,5 @@ data class ServiceType(
     val working: Boolean,
 
     @Column(nullable = false)
-    val accumulator: Int = 0,
+    var accumulator: Int = 0,
 )

@@ -7,6 +7,4 @@ import java.util.Optional
 @Repository
 interface ServiceTypeRepository: JpaRepository<ServiceType, Long> {
     fun findByTag(tag: String): Optional<ServiceType>
-
-    fun findAccumulatorById(serviceType: Long): Int
 }

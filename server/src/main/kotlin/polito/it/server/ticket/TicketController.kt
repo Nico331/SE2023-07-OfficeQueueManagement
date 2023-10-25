@@ -24,8 +24,8 @@ class TicketController (private val ticketService: TicketService) {
         return ticketService.getCurrentCounterTicket(counterId.toLong())
     }
 
-    @PostMapping("/ticket")
-    fun addTicket(@RequestBody serviceType: Long) : ResponseEntity<TicketDTO> {
+    @PostMapping("/ticket/servicetype/{serviceType}")
+    fun addTicket(@PathVariable serviceType: Long) : ResponseEntity<TicketDTO> {
         return ticketService.addTicket(serviceType)
     }
 

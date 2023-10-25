@@ -21,7 +21,7 @@ class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
     private val serviceTypeRepository: ServiceTypeRepository,
     private val counterServiceTypeRepository: CounterServiceTypeRepository,
-): TicketService {
+) : TicketService {
     override fun getAll(): List<TicketDTO> {
         return ticketRepository.findAll().map {
             it.toDTO()
@@ -33,9 +33,12 @@ class TicketServiceImpl(
     }
 
     override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
-        val nextAcc = serviceTypeRepository.findAccumulatorById(serviceType);
-        val newTicket = Ticket(id=0L,number= nextAcc, serviceType = serviceTypeRepository.findById(serviceType).get() )
+        val service= serviceTypeRepository.findById(serviceType).get();
+        val nextAcc = service.accumulator;
+        val newTicket =
+            Ticket(id = 0L, number = nextAcc, serviceType = serviceTypeRepository.findById(serviceType).get())
         val savedTicket = ticketRepository.save(newTicket)
+        val savedService = serviceTypeRepository.save(service.apply { accumulator = (accumulator + 1)  })
 
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
     }
@@ -46,12 +49,20 @@ class TicketServiceImpl(
 
         // 2. e 3. Trovo la coda più lunga con il minor tempo di servizio
         val selectedServiceType = serviceTypesForCounter
-            .sortedWith(compareBy({ -ticketRepository.countByServiceTypeTagAndStatus(it.tag, "waiting") }, { it.serviceTime }))
+            .sortedWith(
+                compareBy(
+                    { -ticketRepository.countByServiceTypeTagAndStatus(it.tag, "waiting") },
+                    { it.serviceTime })
+            )
             .firstOrNull()
 
         // 4. Seleziono il primo ticket da quella coda
-        return ticketRepository.findFirstByServiceTypeTagAndStatusOrderByTimestampAsc(selectedServiceType!!.tag, "waiting").toDTO()
+        return ticketRepository.findFirstByServiceTypeTagAndStatusOrderByTimestampAsc(
+            selectedServiceType!!.tag,
+            "waiting"
+        ).toDTO()
     }
+
     override fun updateTicket(updatedTicket: Ticket): ResponseEntity<TicketDTO> {
         val savedTicket = ticketRepository.save(updatedTicket)
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.OK)
@@ -63,8 +74,10 @@ class TicketServiceImpl(
     }
 
     override fun getTicketsInQueueForServiceType(serviceTypeTag: String): List<TicketDTO> {
-        return ticketRepository.findByServiceTypeTagAndStatus(serviceTypeTag, "waiting").map { ticket -> ticket.toDTO() }
+        return ticketRepository.findByServiceTypeTagAndStatus(serviceTypeTag, "waiting")
+            .map { ticket -> ticket.toDTO() }
     }
+
     override fun getCountOfWaitingCustomersPerServiceType(): Map<ServiceTypeDTO, Int> {
         return serviceTypeRepository.findAll().map { it.toDTO() }.associateWith { serviceType ->
             ticketRepository.countByServiceTypeTagAndStatus(serviceType.tag, "waiting")
@@ -74,8 +87,9 @@ class TicketServiceImpl(
     override fun getCurrentCounterTicket(counterId: Long): TicketDTO {
         return ticketRepository.findFirstByCounterIdAndTimestampNotNullOrderByTimestampDesc(counterId).toDTO();
     }
-    override fun getMainboard(): List<TicketDTO>{
-        val pageRequest = PageRequest.of(0,5)
+
+    override fun getMainboard(): List<TicketDTO> {
+        val pageRequest = PageRequest.of(0, 5)
         return ticketRepository.findByCounterIsNotNullOrderByDateIssuedDesc(pageRequest).map { it.toDTO() };
     }
 }
