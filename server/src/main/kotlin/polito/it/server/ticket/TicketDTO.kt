@@ -1,6 +1,7 @@
 package polito.it.server.ticket
 
 import java.sql.Timestamp
+import java.time.Duration
 import java.time.LocalDate
 
 data class TicketDTO(
@@ -10,7 +11,8 @@ data class TicketDTO(
     val dateIssued: LocalDate,
     val serviceTypeId: Long,
     val counterId: Long,
-    val status: String
+    val status: String,
+    val waitingTime: Duration
 )
 
 fun Ticket.toDTO(): TicketDTO {
@@ -21,6 +23,7 @@ fun Ticket.toDTO(): TicketDTO {
         dateIssued = this.dateIssued,
         serviceTypeId = this.serviceType.id,
         counterId = this.counter.id,
-        status = this.status
+        status = this.status,
+        waitingTime = this.waitingTime
     )
 }

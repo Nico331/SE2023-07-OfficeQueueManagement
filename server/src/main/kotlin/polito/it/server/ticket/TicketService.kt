@@ -1,6 +1,7 @@
 package polito.it.server.ticket
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.RequestBody
 import polito.it.server.serviceType.ServiceType
 import polito.it.server.serviceType.ServiceTypeDTO
 
@@ -10,7 +11,7 @@ interface TicketService {
 
     fun getTicket(id: Long): TicketDTO?
 
-    fun addTicket(newTicket: Ticket): ResponseEntity<TicketDTO>
+    fun addTicket(serviceType: Long): ResponseEntity<TicketDTO>
 
     // Determino i tipi di servizio che il counter può gestire.
     // Identifico la coda più lunga tra quelle che il counter può gestire.

@@ -6,6 +6,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+import org.springframework.web.bind.annotation.RequestBody
 import polito.it.server.counterServiceType.CounterServiceTypeRepository
 import polito.it.server.serviceType.ServiceType
 import polito.it.server.serviceType.ServiceTypeDTO
@@ -31,7 +32,9 @@ class TicketServiceImpl(
         return ticketRepository.findByIdOrNull(id)?.toDTO()
     }
 
-    override fun addTicket(newTicket: Ticket): ResponseEntity<TicketDTO> {
+    override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
+        val nextAcc = serviceTypeRepository.findAccumulatorById(serviceType);
+        val newTicket = Ticket(number= nextAcc, serviceType = serviceTypeRepository.findById(serviceType).get() )
         val savedTicket = ticketRepository.save(newTicket)
 
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
