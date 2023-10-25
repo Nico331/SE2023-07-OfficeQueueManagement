@@ -18,4 +18,7 @@ data class ServiceType(
 
     @Column(nullable = false)
     val working: Boolean,
+
+    @Column(nullable = false)
+    var accumulator: Int = 0,
 )
