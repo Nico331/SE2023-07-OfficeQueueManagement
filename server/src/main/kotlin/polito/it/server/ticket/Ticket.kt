@@ -16,24 +16,24 @@ data class Ticket(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long,
 
-    @Column(nullable = false, unique = false)
-    val number: Int,
+    @Column(unique = false)
+    val number: Int?=null,
 
-    @Column(nullable = true)
-    val timestamp: Timestamp?, // 2023-10-22:15:56:00
+    @Column()
+    val timestamp: Timestamp?=null, // 2023-10-22:15:56:00
 
-    @Column(nullable = true)
-    val dateIssued: LocalDate?, //2023-10-22
+    @Column()
+    val dateIssued: LocalDate?=null, //2023-10-22
 
     @ManyToOne
     val serviceType: ServiceType,
 
     @ManyToOne
-    val counter: Counter?,
+    val counter: Counter?=null,
 
     @Column(nullable = false)
     val status: String = "waiting", // Ad es. "waiting", "served", etc.
 
     @Column(nullable = true)
-    val waitingTime: Duration? // Ad es. "waiting", "served", etc.
+    val waitingTime: Duration?=null // Ad es. "waiting", "served", etc.
 )

@@ -34,7 +34,7 @@ class TicketServiceImpl(
 
     override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
         val nextAcc = serviceTypeRepository.findAccumulatorById(serviceType);
-        val newTicket = Ticket(number= nextAcc, serviceType = serviceTypeRepository.findById(serviceType).get() )
+        val newTicket = Ticket(id=0L,number= nextAcc, serviceType = serviceTypeRepository.findById(serviceType).get() )
         val savedTicket = ticketRepository.save(newTicket)
 
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
