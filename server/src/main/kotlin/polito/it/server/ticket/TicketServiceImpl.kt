@@ -1,6 +1,7 @@
 package polito.it.server.ticket
 
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -68,6 +69,10 @@ class TicketServiceImpl(
     }
 
     override fun getCurrentCounterTicket(counterId: Long): TicketDTO {
-        return ticketRepository.findFirstByCounterIdAndDateIssuedNullOrderByTimestampDesc(counterId).toDTO();
+        return ticketRepository.findFirstByCounterIdAndTimestampNotNullOrderByTimestampDesc(counterId).toDTO();
+    }
+    override fun getMainboard(): List<TicketDTO>{
+        val pageRequest = PageRequest.of(0,5)
+        return ticketRepository.findByCounterIsNotNullOrderByDateIssuedDesc(pageRequest).map { it.toDTO() };
     }
 }

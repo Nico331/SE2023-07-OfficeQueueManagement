@@ -16,7 +16,7 @@ group = "polito.it"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    var sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 configurations {
