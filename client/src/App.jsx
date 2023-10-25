@@ -33,6 +33,8 @@ function App() {
                 })
                 .then(() => {
                     setCounters(list);
+                    console.log("prova app");
+                    console.log("app"+counters);
                     list = [];
                 })
                 .catch(err => {
@@ -48,7 +50,7 @@ function App() {
                 <Routes>
                     <Route path='/' element={<Navigate replace to='/mainBoard'/>}/>
                     <Route path='/mainBoard' element={<MainBoard counters={counters}/>}/>
-                    <Route path='/counter/:id' element={<CounterScreen/>}/>
+                    <Route path='/counter/:id' element={<CounterScreen counters={counters} refresh={refresh} setRefresh={setRefresh}/>}/>
                     <Route path='/customer' element={<CustomerScreen/>}/>
                 </Routes>
             </BrowserRouter>
