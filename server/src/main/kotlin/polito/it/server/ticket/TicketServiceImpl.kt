@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable
 import polito.it.server.counter.CounterRepository
 import java.time.LocalDate
 import java.time.Instant
+import kotlin.math.roundToInt
 
 @Service
 @Transactional
@@ -82,8 +83,18 @@ class TicketServiceImpl(
     }
 
     override fun estimateWaitTimeForTicket(ticketId: Long): Int {
-        // Da fare. Ora restituisco 10 minuti
-        return 10
+        val ticket = ticketRepository.findById(ticketId)
+        val serviceType = ticket.get().serviceType
+        val serviceTime = serviceType.serviceTime
+        val numberPeopleInQueue = getTicketsInQueueForServiceType(ticket.get().serviceType.tag).count()
+        val counterListThatSatisfyRequestedService = counterServiceTypeRepository.findDistinctByServiceType(serviceType)
+
+        val sumFactors = counterListThatSatisfyRequestedService.map { 1/ counterServiceTypeRepository.countAllByCounter(it.counter) }
+
+        val time = serviceTime * (numberPeopleInQueue / sumFactors.sum() + 0.5)
+
+        return time.roundToInt()
+
     }
 
     override fun getTicketsInQueueForServiceType(serviceTypeTag: String): List<TicketDTO> {
