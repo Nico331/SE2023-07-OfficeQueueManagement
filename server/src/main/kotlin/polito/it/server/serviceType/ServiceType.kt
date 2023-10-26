@@ -8,7 +8,7 @@ import polito.it.server.EntityBase
 data class ServiceType(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long=0L,
 
     @Column(nullable = false, unique = true)
     val tag: String,

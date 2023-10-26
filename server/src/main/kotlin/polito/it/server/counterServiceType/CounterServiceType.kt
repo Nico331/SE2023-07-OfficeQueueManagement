@@ -9,7 +9,7 @@ import polito.it.server.serviceType.ServiceType
 data class CounterServiceType(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long=0L,
 
     @ManyToOne
     val counter: Counter,

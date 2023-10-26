@@ -12,7 +12,7 @@ class CounterController (private val counterService: CounterService){
     }
     @PostMapping("/addcounter")
     fun addServiceType(@RequestBody request: CounterDTO): CounterDTO {
-        return counterService.addCounter(request.number)
+        return counterService.addCounter(Integer.parseInt(request.number.toString()))
     }
 
     @DeleteMapping("/removecounter/{number}")
