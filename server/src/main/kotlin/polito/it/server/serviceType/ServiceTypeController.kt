@@ -11,6 +11,7 @@ class ServiceTypeController (private val serviceTypeService: ServiceTypeService)
     }
     @GetMapping("/getservicetype/{id}")
     fun getCounterById(@PathVariable id: String): ServiceTypeDTO {
+        println(id)
         return serviceTypeService.getById(id.toLong())
     }
     @PostMapping("/addservicetype")
