@@ -47,21 +47,22 @@ const MainBoard = (props) => {
         }
         else {
             const newTicket = tickets[0];
-            const newTicketService = services.find((service) => service.id === newTicket.serviceType );
+            // const newTicketService = services.find((service) => service.id === newTicket.serviceType );
+            // console.log(newTicketService);
             tickets.shift();
             return(
                 <>
                 <div className="main-box">
                     <p className="lastTicket" style={{fontSize:"80px", fontWeight:"bold"}}>NOW SERVING:</p>
-                    <p className="lastTicket" style={{fontSize:"400px", fontWeight:"bold"}}>{newTicketService.code}{newTicket.number}</p>
+                    <p className="lastTicket" style={{fontSize:"400px", fontWeight:"bold"}}>{newTicket.number}</p>
                     <p className="lastTicket" style={{fontSize:"80px", fontWeight:"bold"}}>AT COUNTER {newTicket.counterId}</p>
                 </div>
                 <div className="sidebar">
                     <p style={{fontSize:"20px", fontWeight:"bold"}}>LAST FIVE TICKET CALLED:</p>
                     {tickets.map(ticket => {
-                        let S = services.find((service) => service.id === ticket.serviceType );
+                        // let S = services.find((service) => service.id === ticket.serviceType );
                         return(
-                            <p style={{fontSize:"70px", fontWeight:"bold"}}>{S}{ticket.number}</p>
+                            <p style={{fontSize:"70px", fontWeight:"bold"}}>{ticket.number}</p>
                         )
                     })}
                 </div>
