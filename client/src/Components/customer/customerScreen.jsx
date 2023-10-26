@@ -63,7 +63,7 @@ const CustomerScreen = () => {
                         :
                         <>
                             <Col style={{border: 'solid 1px black'}}>
-                                <Form.Label>Ticket id: {nticket.id} </Form.Label>
+                                <Form.Label>Ticket id: {sservice.id + sservice.code} </Form.Label>
                                 <br/>
                                 {/*<Form.Label>Type of Service: {services.find((index) => {
 
