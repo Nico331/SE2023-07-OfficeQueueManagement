@@ -21,7 +21,7 @@ const CustomerScreen = () => {
     const newticket = (event) => {
         event.preventDefault();
         if (sservice !== "") {
-            axios.post('http://localhost:8080/API/ticket/servicetype/'+sservice)
+            axios.post('http://localhost:8080/API/ticket/servicetype/'+sservice.id)
                 .then((response) => {
                     setNticket(response.data);
                 })
@@ -35,41 +35,44 @@ const CustomerScreen = () => {
             return;
         }
     };
-
+    const handleServiceChange = (event) => {
+        const selectedId = Number(event.target.value);
+        const selectedService = services.find(service => service.id === selectedId);
+        setSservice(selectedService);
+    };
     return (
         <>
-            <Container fluid>
-                <Row className={"justify-content-md-center"} id={"mainform_customer"} style={{marginTop: '1em'}}>
-                    <Col>
-                        <Form onSubmit={newticket}>
-                            <Form.Label>Please select a service:</Form.Label>
-                            <Form.Select style={{marginBottom: '0.5em'}} defaultValue={""} onChange={text => setSservice(text.target.value)}>
+            <Container fluid style={{transform: 'scale(2)', marginTop:'100px'}}>
+                <Row className={"justify-content-center"} id={"mainform_customer"} style={{marginTop: '1em'}}>
+                    <Col xs={12} md={6}>
+                        <Form onSubmit={newticket} className="text-center">
+                            <Form.Label style={{width:"200px"}}>Please select a service:</Form.Label>
+                            <Form.Select style={{marginBottom: '0.5em', width:"200px"}} defaultValue={""} onChange={handleServiceChange}>
                                 <option disabled={true} value="">Select service</option>
-                                {services.map((index) => (
-                                    <option key={index.id} value={index.id}>{index.tag}</option>
-                                    )
-                                )}
+                                {services.map((service) => (
+                                    <option key={service.id} value={service.id}>{service.tag}</option>
+                                ))}
                             </Form.Select>
-                            {message && <Row> <Alert style={{marginLeft: '0.80em', marginTop: '0.5em'}} variant={"danger"} show={true} onClose={() => setMessage(false)} dismissible>Please select a service</Alert> </Row>}
-                            <Button style={{}} type="submit">
+                            {message &&
+                                <Row className={"justify-content-center"}>
+                                    <Alert style={{marginLeft: '0.80em', marginTop: '0.5em'}} variant={"danger"} show={true} onClose={() => setMessage(false)} dismissible>Please select a service</Alert>
+                                </Row>
+                            }
+                            <Button type="submit" style={{width:"200px"}}>
                                 New Ticket
                             </Button>
                         </Form>
                     </Col>
                 </Row>
-                <Row style={{marginTop: '0.5em'}} id={"newticket"}>
+                <Row className={"justify-content-center"} style={{marginTop: '0.5em'}} id={"newticket"}>
                     {nticket === "" ?
                         null
                         :
                         <>
-                            <Col style={{border: 'solid 1px black'}}>
-                                <Form.Label>Ticket id: {sservice.id + sservice.code} </Form.Label>
+                            <Col xs={12} md={6} style={{width:"200px", marginLeft:"75px", border: 'solid 1px black', textAlign: 'center'}}>
+                                <Form.Label>Ticket id: {sservice.code+nticket.number.toString()} </Form.Label>
                                 <br/>
-                                {/*<Form.Label>Type of Service: {services.find((index) => {
-
-                                })}</Form.Label>*/}
-                                
-                                <Form.Label>Waiting time: {nticket.waitingTime}</Form.Label>
+                                <Form.Label>Waiting time: {nticket.waitingTime/60} min</Form.Label>
                             </Col>
                         </>
                     }
