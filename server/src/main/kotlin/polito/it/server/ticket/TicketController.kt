@@ -11,12 +11,12 @@ class TicketController (private val ticketService: TicketService) {
 
     @GetMapping("/gettickets")
     fun getTickets(): List<TicketDTO> {
-        return ticketService.getMainboard()
+        return ticketService.getTicketsWithInProgressOrServedStatus()
     }
 
     @GetMapping("/ticket/counter/{counterId}")
-    fun getCurrentCounterTicket(@PathVariable counterId: String): TicketDTO {
-        return ticketService.getCurrentCounterTicket(counterId.toLong())
+    fun getCurrentCounterTicket(@PathVariable counterId: String): TicketDTO? {
+        return ticketService.getLatestTicketByCounterId(counterId.toLong())
     }
 
     @PostMapping("/ticket/servicetype/{serviceType}")
@@ -30,7 +30,7 @@ class TicketController (private val ticketService: TicketService) {
         return ticketService.getNextTicket(counterId);
     }
     @PutMapping("/counter/{counterId}/stop")
-    fun stopTicket(@PathVariable counterId: Long) : TicketDTO {
+    fun stopTicket(@PathVariable counterId: Long) : TicketDTO? {
         return ticketService.stopTicket(counterId)
     }
 

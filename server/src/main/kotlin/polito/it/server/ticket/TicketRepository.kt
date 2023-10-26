@@ -1,10 +1,10 @@
 package polito.it.server.ticket
 
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
-import polito.it.server.serviceType.ServiceType
-import java.awt.print.Pageable
+import java.time.LocalDate
 
 @Repository
 interface TicketRepository: JpaRepository<Ticket, Long> {
@@ -14,7 +14,12 @@ interface TicketRepository: JpaRepository<Ticket, Long> {
 
     fun findFirstByCounterIdAndTimestampNotNullOrderByTimestampDesc(counterId: Long): Ticket
 
-    fun findByCounterIsNotNullOrderByDateIssuedDesc(pageRequest: PageRequest): List<Ticket>
+    @Query("SELECT t FROM Ticket t WHERE (t.status = 'in progress' OR t.status = 'served') ORDER BY t.timestampCalled DESC")
+    fun findByInProgressOrServedStatus(pageRequest: Pageable): List<Ticket>
 
-    fun findFirstByCounterIdOrderByTimestampDesc(counterId: Long): Ticket
+    fun findFirstByCounterIdAndServiceTypeTag(counterId: Long, serviceTypeTag: String): Ticket
+    fun countByServiceTypeIdAndDateIssued(id: Long,dateIssued: LocalDate): Int
+    @Query("SELECT t FROM Ticket t WHERE t.counter.id = :counterId ORDER BY t.timestamp DESC")
+    fun findLatestTicketByCounterId(counterId: Long): Ticket?
+
 }

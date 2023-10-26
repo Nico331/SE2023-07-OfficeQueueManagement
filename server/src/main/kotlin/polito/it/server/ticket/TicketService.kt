@@ -26,6 +26,9 @@ interface TicketService {
     fun getCountOfWaitingCustomersPerServiceType(): Map<ServiceTypeDTO, Int>
 
     fun getCurrentCounterTicket(counterId: Long): TicketDTO
-    fun getMainboard(): List<TicketDTO>
-    fun stopTicket(counterId: Long): TicketDTO
+    fun stopTicket(counterId: Long): TicketDTO?
+    fun getLatestTicketByCounterId(counterId: Long): TicketDTO?
+
+    fun getTicketsWithInProgressOrServedStatus(): List<TicketDTO>
+
 }

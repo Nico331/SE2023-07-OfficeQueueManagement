@@ -21,6 +21,8 @@ data class Ticket(
 
     @Column()
     val timestamp: Timestamp?=null, // 2023-10-22:15:56:00
+    @Column()
+    val timestampCalled: Timestamp?=null, // 2023-10-22:15:56:00
 
     @Column()
     val dateIssued: LocalDate?=null, //2023-10-22

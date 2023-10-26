@@ -2,10 +2,12 @@ package polito.it.server.ticket
 
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
+
 import org.springframework.web.bind.annotation.RequestBody
 import polito.it.server.counterServiceType.CounterServiceTypeRepository
 import polito.it.server.serviceType.ServiceType
@@ -14,11 +16,16 @@ import polito.it.server.serviceType.ServiceTypeRepository
 import polito.it.server.serviceType.toDTO
 import java.sql.Timestamp
 import kotlin.time.Duration
+import org.springframework.data.domain.Pageable
+import polito.it.server.counter.CounterRepository
+import java.time.LocalDate
+import java.time.Instant
 
 @Service
 @Transactional
 class TicketServiceImpl(
     private val ticketRepository: TicketRepository,
+    private val counterRepository: CounterRepository,
     private val serviceTypeRepository: ServiceTypeRepository,
     private val counterServiceTypeRepository: CounterServiceTypeRepository,
 ) : TicketService {
@@ -31,7 +38,7 @@ class TicketServiceImpl(
     override fun getTicket(id: Long): TicketDTO? {
         return ticketRepository.findByIdOrNull(id)?.toDTO()
     }
-
+/*
     override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
         val service= serviceTypeRepository.findById(serviceType).get();
         val nextAcc = service.accumulator;
@@ -41,8 +48,14 @@ class TicketServiceImpl(
         val savedService = serviceTypeRepository.save(service.apply { accumulator = (accumulator + 1)  })
 
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
-    }
+    }*/
+    override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
+    val number = ticketRepository.countByServiceTypeIdAndDateIssued(serviceType,LocalDate.now());
+    val newTicket = Ticket(id = 0L, number = number+1, serviceType = serviceTypeRepository.findById(serviceType).get(), timestamp = Timestamp(System.currentTimeMillis()), dateIssued = LocalDate.now())
+    val savedTicket = ticketRepository.save(newTicket)
 
+    return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
+}
     override fun getNextTicket(counterId: Long): TicketDTO {
         // 1. Ottengo i tipi di servizio che il counter può gestire
         val serviceTypesForCounter = counterServiceTypeRepository.findByCounterId(counterId).map { it.serviceType }
@@ -57,10 +70,10 @@ class TicketServiceImpl(
             .firstOrNull()
 
         // 4. Seleziono il primo ticket da quella coda
-        return ticketRepository.findFirstByServiceTypeTagAndStatusOrderByTimestampAsc(
+        return ticketRepository.save(ticketRepository.findFirstByServiceTypeTagAndStatusOrderByTimestampAsc(
             selectedServiceType!!.tag,
             "waiting"
-        ).toDTO()
+        ).copy(status="in progress", counter = counterRepository.findByIdOrNull(counterId), timestampCalled =  Timestamp(System.currentTimeMillis()) )).toDTO()
     }
 
     override fun updateTicket(updatedTicket: Ticket): ResponseEntity<TicketDTO> {
@@ -88,16 +101,22 @@ class TicketServiceImpl(
         return ticketRepository.findFirstByCounterIdAndTimestampNotNullOrderByTimestampDesc(counterId).toDTO();
     }
 
-    override fun getMainboard(): List<TicketDTO> {
+    override fun getTicketsWithInProgressOrServedStatus(): List<TicketDTO> {
         val pageRequest = PageRequest.of(0, 5)
-        return ticketRepository.findByCounterIsNotNullOrderByDateIssuedDesc(pageRequest).map { it.toDTO() };
+        return ticketRepository.findByInProgressOrServedStatus(pageRequest).map { it.toDTO() }
     }
 
-
-    override fun stopTicket(counterId: Long): TicketDTO {
-        var ticket = ticketRepository.findFirstByCounterIdOrderByTimestampDesc(counterId);
-        ticket.apply { status = "served"}
-        ticketRepository.save(ticket)
-        return ticket.toDTO()
+    override fun stopTicket(counterId: Long): TicketDTO? {
+        val ticket:Ticket? = ticketRepository.findFirstByCounterIdAndServiceTypeTag(counterId, "in progress");
+        ticket?.apply { status = "served"}
+        if(ticket!=null){
+            return ticketRepository.save(ticket).toDTO()
+        }
+        else {
+            return null
+        }
+    }
+    override fun getLatestTicketByCounterId(counterId: Long): TicketDTO? {
+        return ticketRepository.findLatestTicketByCounterId(counterId)?.toDTO()
     }
 }
