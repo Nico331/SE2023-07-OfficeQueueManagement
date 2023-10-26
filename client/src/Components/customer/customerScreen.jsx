@@ -40,13 +40,11 @@ const CustomerScreen = () => {
             axios.post('http://localhost:8080/API/ticket/servicetype/'+sservice)
                 .then((response) => {
                     console.log("New Ticket RESPONSE: " + response);
-                    setNticket(response);
+                    setNticket(response.data);
                 })
                 .catch((error) => {
                     console.error('Error of post:', error);
                 });
-            console.log(sservice);
-            console.log(nticket);
 /*        }
         else {
             setMessage("Please select a service");
@@ -84,9 +82,11 @@ const CustomerScreen = () => {
                             null
                         :
                             <>
-                                <Form.Label>Ticket id:{nticket[0]} </Form.Label>
-                                <Form.Label>Waiting time:{nticket[1]}</Form.Label>
-                            </>}
+                                <Form.Label>Ticket id:{nticket.id} </Form.Label>
+                                <br/>
+                                <Form.Label>Waiting time:{nticket.waiting_time}</Form.Label>
+                            </>
+                        }
                     </Col>
                 </Row>
             </Container>
