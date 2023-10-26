@@ -37,5 +37,5 @@ data class Ticket(
     var status: String = "waiting", // Ad es. "waiting", "served", etc.
 
     @Column(nullable = true)
-    val waitingTime: Duration?=null // Ad es. "waiting", "served", etc.
+    val waitingTime: Duration // Ad es. "waiting", "served", etc.
 )
