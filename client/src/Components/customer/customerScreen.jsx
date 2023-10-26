@@ -39,7 +39,6 @@ const CustomerScreen = () => {
             event.preventDefault();
             axios.post('http://localhost:8080/API/ticket/servicetype/'+sservice)
                 .then((response) => {
-                    console.log("New Ticket RESPONSE: " + response);
                     setNticket(response.data);
                 })
                 .catch((error) => {
@@ -69,7 +68,7 @@ const CustomerScreen = () => {
                             <Form.Select defaultValue={""} style={{width: '30%'}} onChange={text => setSservice(text.target.value)}>
                                 <option disabled={true} value="">Select service</option>
                                 {services.map((index) => (
-                                    <option value={index.id}>{index.tag}</option>
+                                    <option key={index.id} value={index.id}>{index.tag}</option>
                                     )
                                 )}
                             </Form.Select>
