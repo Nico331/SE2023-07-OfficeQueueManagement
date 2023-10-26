@@ -10,7 +10,7 @@ const CustomerScreen = () => {
     const [message, setMessage] = useState(false);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/API/getservicetypes')
+        axios.get('http://localhost:8080/API/counterServiceTypes/distinctServiceTypes')
             .then((response) => {
                 setServices(response.data);
             })

@@ -55,7 +55,9 @@ class TicketServiceImpl(
     @OptIn(ExperimentalTime::class)
     override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
     val number = ticketRepository.countByServiceTypeIdAndDateIssued(serviceType,LocalDate.now());
-    val newTicket = Ticket(id = 0L, number = number+1, serviceType = serviceTypeRepository.findById(serviceType).get(), timestamp = Timestamp(System.currentTimeMillis()), dateIssued = LocalDate.now(), waitingTime = Duration.ofMinutes( estimateWaitTimeForTicket(serviceTypeRepository.findById(serviceType).get()).toLong()))
+    val newTicket = Ticket(id = 0L, number = number+1, serviceType = serviceTypeRepository.findById(serviceType).get(),
+        timestamp = Timestamp(System.currentTimeMillis()), dateIssued = LocalDate.now(), waitingTime =
+        Duration.ofMinutes( estimate(serviceTypeRepository.findById(serviceType).get()).toLong()))
     val savedTicket = ticketRepository.save(newTicket)
 
 
@@ -98,6 +100,35 @@ class TicketServiceImpl(
 
         return time.roundToInt()
 
+    }
+    override fun estimate(serviceType: ServiceType): Int {
+        // Check for null serviceType
+        if(serviceType == null) throw IllegalArgumentException("ServiceType cannot be null.")
+
+        val tr = serviceType.serviceTime
+        // Check for invalid serviceTime
+        if(tr <= 0) throw IllegalArgumentException("ServiceTime must be positive.")
+        val nr = ticketRepository.countByServiceTypeTagAndStatus(serviceType.tag, "waiting")
+            ?: throw RuntimeException("Failed to retrieve tickets in queue.")
+        println("test")
+        println(nr)
+        val countersForService = counterServiceTypeRepository.findDistinctByServiceType(serviceType)
+            ?: throw RuntimeException("Failed to retrieve counters that satisfy requested service.")
+        println(countersForService)
+        val sumFactors = countersForService.map {
+            val ki = counterServiceTypeRepository.countAllTypesByCounter(it.counter)
+            // Indicator variable si,r
+            val sir = if(it.serviceType == serviceType) 1 else 0
+            sir / ki.toFloat()
+        }.sum()
+        println(sumFactors)
+        return if(sumFactors.toDouble() == 0.0) {
+            0
+        } else {
+            val time = tr * (nr / sumFactors + 0.5)
+            println(time)
+            time.roundToInt()
+        }
     }
 
     override fun getTicketsInQueueForServiceType(serviceTypeTag: String): List<TicketDTO> {

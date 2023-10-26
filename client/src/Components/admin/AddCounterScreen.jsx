@@ -2,11 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useMutation, useQuery } from 'react-query';
 import { Container, Row, Col, ListGroup, Button, FormControl, InputGroup } from 'react-bootstrap';
+import AddServiceToCounter from "./AddServiceToCounter";
 
 const CounterManagement = () => {
     const [counters, setCounters] = useState([]);
     const [newCounterNumber, setNewCounterNumber] = useState(0);
-
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedCounter, setSelectedCounter] = useState(null);
+    const handleCounterClick = (counter) => {
+        setSelectedCounter(counter);
+        setIsModalVisible(true);
+    }
     // Fetch all counters
     const { data, refetch } = useQuery("counters", async () => {
         const response = await axios.get("http://localhost:8080/API/getcounters");
@@ -58,7 +64,10 @@ const CounterManagement = () => {
                                 paddingRight: '50px',
                                 borderBottom: '2px solid black'
                             }}>
-                            Counter #{counter.number}
+                            <span onClick={() => handleCounterClick(counter)} >
+                                Counter #{counter.number}
+                            </span>
+
                             <span style={{
                                 width: '220px',
                                 display: "inline-block",
@@ -85,7 +94,15 @@ const CounterManagement = () => {
                     </div>
                 </Col>
             </Row>
+            {
+                isModalVisible &&
+                <AddServiceToCounter
+                    counter={selectedCounter}
+                    onClose={() => setIsModalVisible(false)}
+                />
+            }
         </Container>
+
     );
 };
 

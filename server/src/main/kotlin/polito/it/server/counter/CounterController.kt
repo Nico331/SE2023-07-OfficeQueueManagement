@@ -10,6 +10,10 @@ class CounterController (private val counterService: CounterService){
     fun getCounters(): List<CounterDTO> {
         return counterService.getAll()
     }
+    @GetMapping("/getservices/{counterId}")
+    fun getServices(@PathVariable counterId: Long): List<ServiceTypeDTO> {
+        return counterService.getServicesByCounterId(counterId);
+    }
     @PostMapping("/addcounter")
     fun addServiceType(@RequestBody request: CounterDTO): CounterDTO {
         return counterService.addCounter(Integer.parseInt(request.number.toString()))

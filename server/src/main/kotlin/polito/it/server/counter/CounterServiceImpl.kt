@@ -2,11 +2,15 @@ package polito.it.server.counter
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import polito.it.server.counterServiceType.CounterServiceTypeRepository
+import polito.it.server.serviceType.ServiceTypeDTO
+import polito.it.server.serviceType.toDTO
 
 @Service
 @Transactional
 class CounterServiceImpl(
     private val counterRepository: CounterRepository,
+    private val counterServiceTypeRepository: CounterServiceTypeRepository
 ): CounterService{
     override fun getAll(): List<CounterDTO>{
         return counterRepository.findAll().map { it.toDTO() }
@@ -24,5 +28,9 @@ class CounterServiceImpl(
         counterOptional.ifPresent {
             counterRepository.save(counterOptional.get().copy(working = false))
         }
+    }
+
+    override fun getServicesByCounterId(counterId: Long): List<ServiceTypeDTO> {
+        return counterServiceTypeRepository.findServiceTypesByCounterId(counterId).map { it.toDTO() }
     }
 }
