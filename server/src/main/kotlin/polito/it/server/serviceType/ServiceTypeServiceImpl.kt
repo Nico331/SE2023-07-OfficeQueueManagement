@@ -29,4 +29,8 @@ class ServiceTypeServiceImpl(
             serviceTypeRepository.save(serviceTypeOptional.get().copy(working = false))
         }
     }
+
+    override fun getById(serviceId: Long): ServiceTypeDTO {
+        return serviceTypeRepository.findById(serviceId).get().toDTO();
+    }
 }
