@@ -15,12 +15,12 @@ class ServiceTypeServiceImpl(
         return serviceTypeRepository.findAll().map { it.toDTO() }
     }
 
-    override fun addServiceType(serviceTag: String, serviceTime: Int): ServiceTypeDTO {
+    override fun addServiceType(serviceTag: String, serviceTime: Int, code: String): ServiceTypeDTO {
         val serviceTypeOptional = serviceTypeRepository.findByTag(serviceTag)
         return if (serviceTypeOptional.isPresent) {
             serviceTypeRepository.save(serviceTypeOptional.get().copy(serviceTime = serviceTime, working = true)).toDTO()
         } else
-            serviceTypeRepository.save(ServiceType(0L, serviceTag, serviceTime, true)).toDTO()
+            serviceTypeRepository.save(ServiceType(0L, serviceTag, code, serviceTime, true)).toDTO()
     }
     override fun removeServiceType(tag: String) {
         val serviceTypeOptional = serviceTypeRepository.findByTag(tag)

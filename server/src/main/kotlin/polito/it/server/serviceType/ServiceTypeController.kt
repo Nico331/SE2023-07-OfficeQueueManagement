@@ -11,7 +11,7 @@ class ServiceTypeController (private val serviceTypeService: ServiceTypeService)
     }
     @PostMapping("/addservicetype")
     fun addServiceType(@RequestBody request: ServiceTypeDTO): ServiceTypeDTO {
-        return serviceTypeService.addServiceType(request.tag, request.serviceTime)
+        return serviceTypeService.addServiceType(request.tag, request.serviceTime, request.code)
     }
 
     @DeleteMapping("/removeservicetype/{tag}")

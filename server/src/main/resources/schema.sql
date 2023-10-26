@@ -1,9 +1,9 @@
 
-INSERT INTO service_types(id, tag, service_time, working)
+INSERT INTO service_types(id, tag, code, service_time, working)
 VALUES
-    (1, 'Payments', 10, true ),
-    (2, 'Delivery', 15, true ),
-    (3, 'Cards', 20, true); -- ci sono 3 tipi di servizio, pagamenti, delivery e carte
+    (1, 'Payments', 'P', 10, true ),
+    (2, 'Delivery', 'D', 15, true ),
+    (3, 'Cards', 'C', 20, true); -- ci sono 3 tipi di servizio, pagamenti, delivery e carte
 INSERT INTO counters(id, number, working)
 VALUES
     (1, 1, true),

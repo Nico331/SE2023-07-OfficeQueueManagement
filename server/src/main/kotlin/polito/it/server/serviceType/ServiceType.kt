@@ -13,6 +13,9 @@ data class ServiceType(
     @Column(nullable = false, unique = true)
     val tag: String,
 
+    @Column(nullable = false, unique = true)
+    val code: String,
+
     @Column(nullable = false)
     val serviceTime: Int,
 
