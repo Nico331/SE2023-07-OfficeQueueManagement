@@ -92,7 +92,7 @@ class TicketServiceImpl(
         val numberPeopleInQueue = getTicketsInQueueForServiceType(serviceType.tag).count()
         val counterListThatSatisfyRequestedService = counterServiceTypeRepository.findDistinctByServiceType(serviceType)
 
-        val sumFactors = counterListThatSatisfyRequestedService.map { 1/ counterServiceTypeRepository.countAllByCounter(it.counter) }
+        val sumFactors = counterListThatSatisfyRequestedService.map { 1.0/ counterServiceTypeRepository.countAllByCounter(it.counter).toFloat() }
 
         val time = serviceTime * (numberPeopleInQueue / sumFactors.sum() + 0.5)
 
