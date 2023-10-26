@@ -19,7 +19,7 @@ interface TicketRepository: JpaRepository<Ticket, Long> {
 
     fun findFirstByCounterIdAndServiceTypeTag(counterId: Long, serviceTypeTag: String): Ticket
     fun countByServiceTypeIdAndDateIssued(id: Long,dateIssued: LocalDate): Int
-    @Query("SELECT t FROM Ticket t WHERE t.counter.id = :counterId ORDER BY t.timestamp DESC")
+    @Query("SELECT t FROM Ticket t WHERE t.counter.id = :counterId ORDER BY t.timestamp DESC LIMIT 1")
     fun findLatestTicketByCounterId(counterId: Long): Ticket?
 
 }
