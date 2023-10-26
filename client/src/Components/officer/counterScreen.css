@@ -11,16 +11,20 @@
     height: 200px;
     border: 1px solid #000;
     text-align: center;
-    line-height: 200px;
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 16px;
 }
 
 .button-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 100px; /* Imposta l'altezza del contenitore dei pulsanti */
 }
 
-.button {
+.button-container button {
+    width: 150px; /* Imposta la larghezza del pulsante secondo le tue preferenze */
+    height: 50px; /* Imposta l'altezza del pulsante */
+    font-size: 16px; /* Imposta la dimensione del carattere del testo del pulsante */
     margin: 0 10px;
 }
+

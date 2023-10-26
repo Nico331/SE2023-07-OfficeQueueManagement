@@ -17,8 +17,7 @@ const MainBoard = (props) => {
             });
     };
 
-    useEffect(() => {
-        // Imposta il polling per fare una richiesta ogni secondo
+    useEffect(() => {        // Imposta il polling per fare una richiesta ogni secondo
         const pollingInterval = 1000; // 1000 ms = 1 secondo
         const pollingTimer = setInterval(fetchTickets, pollingInterval);
 

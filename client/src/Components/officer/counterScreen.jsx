@@ -14,31 +14,33 @@ const CounterScreen = (props) => {
     //console.log(id);
 
     //const ticketId = counter.nextCustomer;
+    const getTicket = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/API/ticket/counter/${id}`);
+            setTicket(response.data);
+            if (response.data.id) {
+                const serviceTypeResponse = await axios.get(`http://localhost:8080/API/getservicetype/${response.data.id}`);
+                setServiceType(serviceTypeResponse.data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/API/ticket/counter/${id}`)
-            .then(response => {
-                if((!response.data) || (response.data.status === "served")){
-                    setButtonText("Next Customer");
-                    setShowServeButton(false);
-                }else{
-                    setButtonText("Client Served")
-                    setTicket(response.data);
-                    setShowServeButton(true);
 
-                }
 
-                axios.get(`http://localhost:8080/API/getservicetype/${response.data.id}`)
-                    .then(response => {
-                        setServiceType(response.data);
-                    })
+        const pollingInterval = 1000;
+        const pollingTimer = setInterval(() => {
+            if (!ticket.id) {
+                getTicket();
+            }
+        }, pollingInterval);
 
-            })
-            .catch(error => {
-                console.log(error);
-            })
-    }, []);
-
+        return () => {
+            clearInterval(pollingTimer);
+        };
+    }, [id, ticket.id]);
     const serveClient = (event) => {
         event.preventDefault();
         axios.put(`http://localhost:8080/API/counter/${id}/stop`)
@@ -70,27 +72,34 @@ const CounterScreen = (props) => {
     };
     return (
         <div className="container">
-            <div className="square">
-                {
-                    "Serving now: " + "\n" + "ticked id: " + serviceType.code
-                    + ticket.number + "\n" + "service type: " + serviceType.tag
-                }
-            </div>
-            <div className="button-container">
+            {ticket ? (
+                <>
+                    <div className="square">
+                        Serving now: <br />
+                        Ticket id: {serviceType.code + ticket.number} <br />
+                        Service type: {serviceType.tag}
+                    </div>
+                    <div className="button-container">
 
-                {showServeButton && (
-                    <Button className='my-2' type='button' onClick={serveClient}>
-                        {buttonText}
-                    </Button>
-                )}
-                {!showServeButton && (
-                    <Button className='my-2' type='button' onClick={nextCustomer}>
-                        {buttonText}
-                    </Button>
-                )}
+                        {showServeButton && (
+                            <Button className='my-2' type='button' onClick={serveClient}>
+                                {buttonText}
+                            </Button>
+                        )}
+                        {!showServeButton && (
+                            <Button className='my-2' type='button' onClick={nextCustomer}>
+                                {buttonText}
+                            </Button>
+                        )}
 
-            </div>
-     </div>
+                    </div>
+                </>
+
+            ) : (
+                <div className="waiting-message">Waiting for tickets</div>
+            )}
+
+        </div>
     )
 
 }
