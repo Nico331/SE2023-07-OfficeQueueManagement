@@ -14,7 +14,8 @@ const CounterScreen = (props) => {
     const [ticketID, setTicketID] = useState(counter.nextCustomer);
     //const ticketId = counter.nextCustomer;
 
-    const serveClient = () => {
+    const serveClient = (event) => {
+        event.preventDefault();
         axios.put(`http://localhost:8080/API/counter/${counterID}/stop`)
             .then(response => {
                 //console.log("PUT okay for Client Served");
@@ -27,7 +28,8 @@ const CounterScreen = (props) => {
             });
     };
 
-    const nextCustomer = () => {
+    const nextCustomer = (event) => {
+        event.preventDefault();
         axios.put(`http://localhost:8080/API/counter/${counterID}/next`)
             .then(response => {
                 //console.log("PUT okay for Next Customer");
