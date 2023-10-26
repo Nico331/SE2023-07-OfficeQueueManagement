@@ -9,9 +9,14 @@ class ServiceTypeController (private val serviceTypeService: ServiceTypeService)
     fun getCounters(): List<ServiceTypeDTO> {
         return serviceTypeService.getAll()
     }
+    @GetMapping("/getservicetype/{id}")
+    fun getCounterById(@PathVariable id: String): ServiceTypeDTO {
+        println(id)
+        return serviceTypeService.getById(id.toLong())
+    }
     @PostMapping("/addservicetype")
     fun addServiceType(@RequestBody request: ServiceTypeDTO): ServiceTypeDTO {
-        return serviceTypeService.addServiceType(request.tag, request.serviceTime)
+        return serviceTypeService.addServiceType(request.tag, request.serviceTime, request.code)
     }
 
     @DeleteMapping("/removeservicetype/{tag}")

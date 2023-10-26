@@ -15,11 +15,14 @@ import polito.it.server.serviceType.ServiceTypeDTO
 import polito.it.server.serviceType.ServiceTypeRepository
 import polito.it.server.serviceType.toDTO
 import java.sql.Timestamp
-import kotlin.time.Duration
+import java.time.Duration
 import org.springframework.data.domain.Pageable
 import polito.it.server.counter.CounterRepository
 import java.time.LocalDate
 import java.time.Instant
+import kotlin.math.roundToInt
+import kotlin.time.ExperimentalTime
+import kotlin.time.minutes
 
 @Service
 @Transactional
@@ -49,10 +52,13 @@ class TicketServiceImpl(
 
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
     }*/
+    @OptIn(ExperimentalTime::class)
     override fun addTicket(serviceType: Long): ResponseEntity<TicketDTO> {
     val number = ticketRepository.countByServiceTypeIdAndDateIssued(serviceType,LocalDate.now());
-    val newTicket = Ticket(id = 0L, number = number+1, serviceType = serviceTypeRepository.findById(serviceType).get(), timestamp = Timestamp(System.currentTimeMillis()), dateIssued = LocalDate.now())
+    val newTicket = Ticket(id = 0L, number = number+1, serviceType = serviceTypeRepository.findById(serviceType).get(), timestamp = Timestamp(System.currentTimeMillis()), dateIssued = LocalDate.now(), waitingTime = Duration.ofMinutes( estimateWaitTimeForTicket(serviceTypeRepository.findById(serviceType).get()).toLong()))
     val savedTicket = ticketRepository.save(newTicket)
+
+
 
     return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
 }
@@ -81,9 +87,17 @@ class TicketServiceImpl(
         return ResponseEntity(savedTicket.toDTO(), HttpStatus.OK)
     }
 
-    override fun estimateWaitTimeForTicket(ticketId: Long): Int {
-        // Da fare. Ora restituisco 10 minuti
-        return 10
+    override fun estimateWaitTimeForTicket(serviceType: ServiceType): Int {
+        val serviceTime = serviceType.serviceTime
+        val numberPeopleInQueue = getTicketsInQueueForServiceType(serviceType.tag).count()
+        val counterListThatSatisfyRequestedService = counterServiceTypeRepository.findDistinctByServiceType(serviceType)
+
+        val sumFactors = counterListThatSatisfyRequestedService.map { 1.0/ counterServiceTypeRepository.countAllByCounter(it.counter).toFloat() }
+
+        val time = serviceTime * (numberPeopleInQueue / sumFactors.sum() + 0.5)
+
+        return time.roundToInt()
+
     }
 
     override fun getTicketsInQueueForServiceType(serviceTypeTag: String): List<TicketDTO> {

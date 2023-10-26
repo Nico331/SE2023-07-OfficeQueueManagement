@@ -1,0 +1,11 @@
+#mainform_customer{
+    width: 20%;
+    margin: auto;
+    justify-content: center;
+}
+
+#newticket {
+    width: 20%;
+    margin-top: 1em;
+    margin: auto;
+}

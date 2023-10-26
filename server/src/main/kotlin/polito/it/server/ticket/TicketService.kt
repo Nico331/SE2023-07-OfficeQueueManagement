@@ -20,7 +20,7 @@ interface TicketService {
     fun getNextTicket(counterId: Long): TicketDTO
 
     fun updateTicket(updatedTicket: Ticket): ResponseEntity<TicketDTO> // per aggiornare lo stato del ticket
-    fun estimateWaitTimeForTicket(ticketId: Long): Int
+    fun estimateWaitTimeForTicket(serviceType: ServiceType): Int
 
     fun getTicketsInQueueForServiceType(serviceTypeTag: String): List<TicketDTO>
     fun getCountOfWaitingCustomersPerServiceType(): Map<ServiceTypeDTO, Int>
