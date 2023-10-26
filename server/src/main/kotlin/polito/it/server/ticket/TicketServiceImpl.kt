@@ -107,7 +107,7 @@ class TicketServiceImpl(
     }
 
     override fun stopTicket(counterId: Long): TicketDTO? {
-        val ticket:Ticket? = ticketRepository.findFirstByCounterIdAndServiceTypeTag(counterId, "in progress");
+        val ticket:Ticket? = ticketRepository.findFirstByCounterIdAndStatus(counterId, "in progress");
         ticket?.apply { status = "served"}
         if(ticket!=null){
             return ticketRepository.save(ticket).toDTO()

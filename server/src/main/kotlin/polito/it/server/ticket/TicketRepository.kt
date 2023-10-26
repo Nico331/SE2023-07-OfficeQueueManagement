@@ -17,9 +17,9 @@ interface TicketRepository: JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t WHERE (t.status = 'in progress' OR t.status = 'served') ORDER BY t.timestampCalled DESC")
     fun findByInProgressOrServedStatus(pageRequest: Pageable): List<Ticket>
 
-    fun findFirstByCounterIdAndServiceTypeTag(counterId: Long, serviceTypeTag: String): Ticket
+    fun findFirstByCounterIdAndStatus(counterId: Long, status: String): Ticket
     fun countByServiceTypeIdAndDateIssued(id: Long,dateIssued: LocalDate): Int
-    @Query("SELECT t FROM Ticket t WHERE t.counter.id = :counterId ORDER BY t.timestamp DESC")
+    @Query("SELECT t FROM Ticket t WHERE t.counter.id = :counterId ORDER BY t.timestamp DESC LIMIT 1")
     fun findLatestTicketByCounterId(counterId: Long): Ticket?
 
 }
