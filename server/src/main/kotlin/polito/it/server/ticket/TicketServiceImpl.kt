@@ -64,7 +64,7 @@ class TicketServiceImpl(
 
     return ResponseEntity(savedTicket.toDTO(), HttpStatus.CREATED)
 }
-    override fun getNextTicket(counterId: Long): TicketDTO {
+    override fun getNextTicket(counterId: Long): TicketDTO? {
         // 1. Ottengo i tipi di servizio che il counter può gestire
         val serviceTypesForCounter = counterServiceTypeRepository.findByCounterId(counterId).map { it.serviceType }
 
@@ -76,12 +76,19 @@ class TicketServiceImpl(
                     { it.serviceTime })
             )
             .firstOrNull()
+        println("ci sono fin qui")
+        val count= ticketRepository.countByServiceTypeTagAndStatus(serviceTypeTag = selectedServiceType!!.tag, "waiting")
+        println(count)
+        if(count==0){
+            return null
+        } else{
+            // 4. Seleziono il primo ticket da quella coda
+            return ticketRepository.save(ticketRepository.findFirstByServiceTypeTagAndStatusOrderByTimestampAsc(
+                selectedServiceType!!.tag,
+                "waiting"
+            ).copy(status="in progress", counter = counterRepository.findByIdOrNull(counterId), timestampCalled =  Timestamp(System.currentTimeMillis()), waitingTime = Duration.ofSeconds(0) )).toDTO()
 
-        // 4. Seleziono il primo ticket da quella coda
-        return ticketRepository.save(ticketRepository.findFirstByServiceTypeTagAndStatusOrderByTimestampAsc(
-            selectedServiceType!!.tag,
-            "waiting"
-        ).copy(status="in progress", counter = counterRepository.findByIdOrNull(counterId), timestampCalled =  Timestamp(System.currentTimeMillis()) )).toDTO()
+        }
     }
 
     override fun updateTicket(updatedTicket: Ticket): ResponseEntity<TicketDTO> {
@@ -154,11 +161,10 @@ class TicketServiceImpl(
     override fun stopTicket(counterId: Long): TicketDTO? {
         val ticket:Ticket? = ticketRepository.findFirstByCounterIdAndStatus(counterId, "in progress");
         ticket?.apply { status = "served"}
-        if(ticket!=null){
-            return ticketRepository.save(ticket).toDTO()
-        }
-        else {
-            return null
+        return if(ticket!=null){
+            ticketRepository.save(ticket).toDTO()
+        } else {
+            null
         }
     }
     override fun getLatestTicketByCounterId(counterId: Long): TicketDTO? {

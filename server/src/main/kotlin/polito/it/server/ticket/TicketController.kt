@@ -26,7 +26,7 @@ class TicketController (private val ticketService: TicketService) {
 
 
     @PutMapping("/counter/{counterId}/next")
-    fun nextTicket(@PathVariable counterId: Long) : TicketDTO {
+    fun nextTicket(@PathVariable counterId: Long) : TicketDTO? {
         return ticketService.getNextTicket(counterId);
     }
     @PutMapping("/counter/{counterId}/stop")
