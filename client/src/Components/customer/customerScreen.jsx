@@ -36,6 +36,7 @@ const CustomerScreen = () => {
         }
     };
     const handleServiceChange = (event) => {
+        setNticket('')
         const selectedId = Number(event.target.value);
         const selectedService = services.find(service => service.id === selectedId);
         setSservice(selectedService);

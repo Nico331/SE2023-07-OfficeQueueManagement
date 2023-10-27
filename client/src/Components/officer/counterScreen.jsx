@@ -5,13 +5,13 @@ import {useEffect, useState} from "react";
 import './counterScreen.css'
 
 const CounterScreen = (props) => {
-    const [buttonText, setButtonText] = useState("");
+    const [buttonText, setButtonText] = useState("Next Customer");
     const [serviceType, setServiceType] = useState({});
-    const [showServeButton, setShowServeButton] = useState(true);
+    const [showServeButton, setShowServeButton] = useState(false);
     const [ticket, setTicket] = useState({});
     //console.log("counterID: ")
     const {id} = useParams();
-    //console.log(id);
+    console.log(showServeButton);
 
     //const ticketId = counter.nextCustomer;
     const getTicket = async () => {
@@ -20,8 +20,10 @@ const CounterScreen = (props) => {
             setTicket(response.data);
             if(response.data.status === "in progress"){
                 setButtonText("Customer served")
+                setShowServeButton(true);
             } else {
-                setButtonText("Next customer")
+                setShowServeButton(false);
+                setButtonText("Next Customer")
             }
             if (response.data.id) {
                 const serviceTypeResponse = await axios.get(`http://localhost:8080/API/getservicetype/${response.data.serviceTypeId}`);
@@ -40,6 +42,7 @@ const CounterScreen = (props) => {
         }
     }
     useEffect(() => {
+        /*
         const pollingInterval = 1000;
 
         const pollingTimer = setInterval(() => {
@@ -63,12 +66,16 @@ const CounterScreen = (props) => {
             }
         }, pollingInterval);
 
+
         return () => {
             clearInterval(pollingTimer);
         };
-    }, [ticket]);
+         */
+        getTicket().then(r => {})
+    }, []);
 
     const serveClient = (event) => {
+        console.log("A")
         event.preventDefault();
         axios.put(`http://localhost:8080/API/counter/${id}/stop`)
             .then(response => {
@@ -82,13 +89,15 @@ const CounterScreen = (props) => {
     };
 
     const nextCustomer = (event) => {
+        console.log("b")
         event.preventDefault();
         axios.put(`http://localhost:8080/API/counter/${id}/next`)
             .then(response => {
                 //console.log("PUT okay for Next Customer");
-                setTicket(response.data)
-                setButtonText("Customer served")
-                setShowServeButton(true);
+                getTicket().then(r => {})
+                //setTicket(response.data)
+                //setButtonText("Customer served")
+                //setShowServeButton(true);
                 getServiceType();
             })
             .catch(error => {
@@ -97,13 +106,12 @@ const CounterScreen = (props) => {
     };
     return (
         <div className="container">
-            {ticket ? (
                 <>
-                    <div className="square">
-                        Serving now: <br />
-                        Ticket id: {serviceType.code + ticket.number} <br />
+                    {ticket && <div className="square">
+                        Serving now: <br/>
+                        Ticket id: {serviceType.code + ticket.number} <br/>
                         Service type: {serviceType.tag}
-                    </div>
+                    </div>}
                     <div className="button-container">
 
                         {showServeButton && (
@@ -119,10 +127,6 @@ const CounterScreen = (props) => {
 
                     </div>
                 </>
-
-            ) : (
-                <div className="waiting-message">Waiting for tickets</div>
-            )}
 
         </div>
     )

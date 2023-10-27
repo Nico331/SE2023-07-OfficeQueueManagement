@@ -12,7 +12,8 @@ data class TicketDTO(
     val serviceTypeId: Long?,
     val counterId: Long?,
     val status: String?,
-    val waitingTime: Duration
+    val waitingTime: Duration,
+    val code: String
 )
 
 fun Ticket.toDTO(): TicketDTO {
@@ -24,6 +25,7 @@ fun Ticket.toDTO(): TicketDTO {
         serviceTypeId = this.serviceType.id,
         counterId = this.counter?.id,
         status = this.status,
-        waitingTime = this.waitingTime
+        waitingTime = this.waitingTime,
+        code = this.serviceType.code
     )
 }
